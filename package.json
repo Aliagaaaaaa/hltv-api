@@ -1,0 +1,20 @@
+{
+  "name": "hltv-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "got-scraping": "^4.1.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
