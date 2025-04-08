@@ -98,6 +98,31 @@ Fetches detailed information about a specific team using their HLTV ID.
 - Any field might be `null` if the data couldn't be found or parsed from HLTV
 - The entire response will be `null` if the team couldn't be found or the request failed
 
+### `HLTV.enableLogging(enabled)`
+
+Enables or disables console logging for debugging purposes. Logging is disabled by default.
+
+**Parameters:**
+- `enabled` (boolean, optional): Set to `true` to enable logging, `false` to disable. Defaults to `true`.
+
+**Example:**
+```javascript
+import { HLTV } from 'hltv-api-scraper';
+
+// Enable logging
+HLTV.enableLogging();
+// or explicitly
+HLTV.enableLogging(true);
+
+// Later, disable logging if needed
+HLTV.enableLogging(false);
+
+// Now fetch data with logging enabled
+const team = await HLTV.getTeam(6667);
+```
+
+When enabled, detailed logs about requests and parsing will appear in the console.
+
 ## Additional Methods
 
 More methods will be added in future releases:
