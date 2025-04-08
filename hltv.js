@@ -30,21 +30,25 @@ class HLTV {
 
     try {
       const response = await this.gotInstance(url);
-      this.log(`Request to ${response.url} successful (Status Code: ${response.statusCode})`);
+
+      this.log(`Request to ${response.url} completed (Status Code: ${response.statusCode})`);
 
       if (response.statusCode < 200 || response.statusCode >= 300) {
-         this.log(`Error: Status Code ${response.statusCode} for ${response.url}`, 'error');
+         this.log(`Error: Received non-2xx Status Code ${response.statusCode} for ${response.url}`, 'error');
          return null;
       }
 
-      this.log('Parsing HTML...');
+      this.log('Parsing HTML response...');
       const $ = cheerio.load(response.body);
 
-      if ($('title').text().includes('Page not found') || $('.bgPadding', '.standard-box').text().includes('Team not found')) {
-          this.log(`Error: Page indicates Team ID ${numericTeamId} not found.`, 'error');
+      const errorBoxExists = $('.standard-box.error-status').length > 0;
+      if (errorBoxExists) {
+          this.log(`Team ID ${numericTeamId} not found (Detected 404 page structure). URL: ${response.url}`, 'warn');
           return null;
       }
 
+
+      this.log(`Attempting to parse team details for ID ${numericTeamId}`);
       const teamData = {
         team_id: numericTeamId,
         name: teamParsers.parseTeamName($),
@@ -56,20 +60,16 @@ class HLTV {
         players: teamParsers.parsePlayers($),
       };
 
-      if (!teamData.name) {
-          this.log(`Error: Could not parse team name for ID ${numericTeamId}. URL: ${url}`, 'error');
-          return null;
-      }
-
+      this.log(`Successfully parsed team data for ID ${numericTeamId}: ${teamData.name}`);
       return teamData;
 
     } catch (error) {
-      this.log(`Error fetching or parsing team data for ID ${numericTeamId}: ${error.message}`, 'error');
+      this.log(`Error fetching or processing team data for ID ${numericTeamId}: ${error.message}`, 'error');
       if (error.response) {
           this.log(`Status Code: ${error.response.statusCode}`, 'error');
           this.log(`Response URL: ${error.response.url}`, 'error');
       } else if (error.request) {
-          this.log("Request made but no response received.", 'error');
+          this.log("Request was made but no response received.", 'error');
       }
       return null;
     }
